@@ -4,7 +4,7 @@ import random
 from collections import deque
 import tensorflow as tf
 
-## mac configurations
+# # mac configurations
 # import tensorflow.compat.v2 as tf
 # tf.enable_v2_behavior()
 

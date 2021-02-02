@@ -140,9 +140,9 @@ trade = True
 def check_stop_time(hour,minutes):
     
     # BERLIN 05:00 - 13:00 / LONDON 06:00 - 14:00 / NEW YORK 11:00 - 19:00 / SYDNEY 19:00 - 03:00 / TOKYO 21:00 - 05:00
-    forex_open_close = ['05','13','06','14','11','19','03','21']
+    forex_open_close = ['04','12','05','13','10','18','02','20']
 
-    for times_market in forex_open_close:
+    for times_market in forex_open_close:¼
         stoptime = times_market
 
     if str(hour) in stoptime and minutes >= 40:
@@ -150,7 +150,7 @@ def check_stop_time(hour,minutes):
     return False
 
 while(1):
-    hour = datetime.datetime.now().hour + 1
+    hour = datetime.datetime.now().hour 
     minutes = datetime.datetime.now().minute
     if check_stop_time(hour,minutes):
         print('wating to pass opening market')

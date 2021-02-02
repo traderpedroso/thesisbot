@@ -220,7 +220,7 @@ def train_data(iq,symbol,symbols,timeframe):
             build_model,
             objective='val_accuracy',
             max_trials=25,
-            executions_per_trial=1,
+            executions_per_trial=2,
             directory='TUN',
             project_name='IQOTC')
 
