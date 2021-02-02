@@ -6,7 +6,7 @@ from sklearn.preprocessing import MinMaxScaler
 from collections import deque
 from indicator import Indicators
 from model import train_data
-import tensorflow.compat.v2 as tf
+import tensorflow as tf
 import datetime
 import time
 import sys
