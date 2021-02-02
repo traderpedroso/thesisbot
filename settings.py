@@ -5,7 +5,7 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
 
 
-iq = ej.iq_login(email = 'user', password='hello', AccountType='REAL') # REAL OR DEMO
+iq = ej.iq_login(email = 'user', password='senha', AccountType='REAL') # REAL OR DEMO
 
 
 symbol = 'USDJPY'       # SIMBOLO ATIVO

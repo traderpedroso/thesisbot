@@ -40,7 +40,7 @@ Thumbs.db
 *.app
 *.exe
 *.war
-setting.py
+settings.py
 # Large media files
 *.mp4
 *.tiff
