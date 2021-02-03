@@ -27,7 +27,7 @@ min_balance =  0        # VALOR MINIMO NA CONTA PARA ABRIR UM TRADE
 min_prob = 0.90        # % MINIMA DE PROBABILIDADE PARA ABIR UM TRADE 
 
 # for mac and tensorflow 2.4 from apple
-ismac = True
+ismac = False
 # data parameters
 seq_len = 5  
 predict_period = 1 
