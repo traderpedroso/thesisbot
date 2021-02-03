@@ -2,16 +2,16 @@ import numpy as np
 import pandas as pd
 import random
 from collections import deque
-import tensorflow as tf
 
-# import tensorflow.compat.v2 as tf
-# tf.enable_v2_behavior()
 
-# from tensorflow.python.framework.ops import disable_eager_execution
-# disable_eager_execution()
+import tensorflow.compat.v2 as tf
+tf.enable_v2_behavior()
 
-# from tensorflow.python.compiler.mlcompute import mlcompute
-# mlcompute.set_mlc_device(device_name='cpu')
+from tensorflow.python.framework.ops import disable_eager_execution
+disable_eager_execution()
+
+from tensorflow.python.compiler.mlcompute import mlcompute
+mlcompute.set_mlc_device(device_name='cpu')
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, LSTM, BatchNormalization, GRU, Bidirectional
@@ -21,7 +21,7 @@ from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoa
 import time
 import os
 from ejtrader import iq_login, iq_get_data
-from settings import SEQ_LEN, FUTURE_PERIOD_PREDICT, LEARNING_RATE, EPOCHS, BATCH_SIZE, EARLYSTOP, VALIDATION_TRAIN
+from settings import seq_len, predict_period, LEARNING_RATE, EPOCHS, BATCH_SIZE, EARLYSTOP, VALIDATION_TRAIN
 from kerastuner.tuners import RandomSearch
 
 
@@ -63,11 +63,11 @@ def preprocess_df(df):
     df = pd.DataFrame(df_scaled,index = indexes)
 
     sequential_data = []
-    prev_days = deque(maxlen=SEQ_LEN)
+    prev_days = deque(maxlen=seq_len)
 
     for i in df.values:
         prev_days.append([n for n in i[:-1]])
-        if len(prev_days) == SEQ_LEN:
+        if len(prev_days) == seq_len:
             sequential_data.append([np.array(prev_days), i[-1]])
 
     random.shuffle(sequential_data)
@@ -119,12 +119,8 @@ def train_data(iq,symbol,symbols,timeframe):
     df.isnull().sum().sum() # there are no nans
     df.fillna(method="ffill", inplace=True)
     df = df.loc[~df.index.duplicated(keep = 'first')]
-    df['future'] = df["close"].shift(-FUTURE_PERIOD_PREDICT)
+    df['future'] = df["GOAL"].shift(-predict_period)
 
-
-
-
-    #df = df.drop(columns = {'open','min','max'})
 
     df = df.dropna()
     dataset = df.fillna(method="ffill")
@@ -137,7 +133,7 @@ def train_data(iq,symbol,symbols,timeframe):
     main_df.fillna(method="ffill", inplace=True)
     main_df.dropna(inplace=True)
 
-    main_df['target'] = list(map(classify, main_df['close'], main_df['future']))
+    main_df['target'] = list(map(classify, main_df['GOAL'], main_df['future']))
 
     main_df.dropna(inplace=True)
 
@@ -170,36 +166,35 @@ def train_data(iq,symbol,symbols,timeframe):
         
 
     
-
+    
 
     
     def build_model(hp):
-        # earlyStoppingCallback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=EARLYSTOP)
         model = Sequential()
         model.add(LSTM(hp.Int('units',
                                         min_value=10,
-                                        max_value=25,
-                                        step=2), input_shape=(train_x.shape[1:]), return_sequences=True))
+                                        max_value=70,
+                                        step=5), input_shape=(train_x.shape[1:]), return_sequences=True))
         model.add(Dropout(0.1))
         model.add(BatchNormalization())
 
         model.add(LSTM(units=hp.Int('units',
                                         min_value=10,
-                                        max_value=25,
+                                        max_value=70,
                                         step=1), return_sequences=True))
         model.add(Dropout(0.2))
         model.add(BatchNormalization())
 
         model.add(LSTM(units=hp.Int('units',
                                         min_value=10,
-                                        max_value=25,
+                                        max_value=70,
                                         step=1)))
         model.add(Dropout(0.2))
         model.add(BatchNormalization())
 
         model.add(Dense(hp.Int('units',
                                             min_value=10,
-                                            max_value=25,
+                                            max_value=70,
                                             step=1),
                             activation='relu'))
         model.add(Dropout(0.2))
@@ -211,7 +206,7 @@ def train_data(iq,symbol,symbols,timeframe):
         model.compile(
             optimizer=tf.keras.optimizers.Adam(
                 hp.Choice('learning_rate',
-                        values=[1e-2])),
+                        values=[1e-2,1e-3])),
             loss='sparse_categorical_crossentropy',
             metrics=['accuracy'])
         return model
@@ -219,8 +214,8 @@ def train_data(iq,symbol,symbols,timeframe):
     tuner = RandomSearch(
             build_model,
             objective='val_accuracy',
-            max_trials=25,
-            executions_per_trial=2,
+            max_trials=200,
+            executions_per_trial=1,
             directory='TUN',
             project_name='IQOTC')
 
@@ -228,11 +223,11 @@ def train_data(iq,symbol,symbols,timeframe):
 
 
     tuner.search(train_x,train_y,
-            epochs=40,
+            epochs=EPOCHS,
             validation_data=(validation_x, validation_y))
 
 
     # model = tuner.get_best_models(num_models=2)
-        
+      
     tuner.results_summary()
     

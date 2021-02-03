@@ -2,17 +2,18 @@ import numpy as np
 import pandas as pd
 import random
 from collections import deque
-import tensorflow as tf
+# import tensorflow as tf
 
-# # mac configurations
-# import tensorflow.compat.v2 as tf
-# tf.enable_v2_behavior()
+# mac configurations
+import tensorflow.compat.v2 as tf
+tf.enable_v2_behavior()
 
-# from tensorflow.python.framework.ops import disable_eager_execution
-# disable_eager_execution()
 
-# from tensorflow.python.compiler.mlcompute import mlcompute
-# mlcompute.set_mlc_device(device_name='cpu')
+from tensorflow.python.framework.ops import disable_eager_execution
+disable_eager_execution()
+
+from tensorflow.python.compiler.mlcompute import mlcompute
+mlcompute.set_mlc_device(device_name='cpu')
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, LSTM, BatchNormalization, GRU, Bidirectional
@@ -22,7 +23,7 @@ from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoa
 import time
 import os
 from ejtrader import iq_login, iq_get_data
-from settings import SEQ_LEN, FUTURE_PERIOD_PREDICT, LEARNING_RATE, EPOCHS, BATCH_SIZE, EARLYSTOP, VALIDATION_TRAIN, NEURONS
+from settings import seq_len, predict_period, LEARNING_RATE, EPOCHS, BATCH_SIZE, EARLYSTOP, VALIDATION_TRAIN, NEURONS
 
 
 
@@ -64,11 +65,11 @@ def preprocess_df(df):
     df = pd.DataFrame(df_scaled,index = indexes)
 
     sequential_data = []
-    prev_days = deque(maxlen=SEQ_LEN)
+    prev_days = deque(maxlen=seq_len)
 
     for i in df.values:
         prev_days.append([n for n in i[:-1]])
-        if len(prev_days) == SEQ_LEN:
+        if len(prev_days) == seq_len:
             sequential_data.append([np.array(prev_days), i[-1]])
 
     random.shuffle(sequential_data)
@@ -121,7 +122,7 @@ def train_data(iq,symbol,symbols,timeframe):
     df.isnull().sum().sum() # there are no nans
     df.fillna(method="ffill", inplace=True)
     df = df.loc[~df.index.duplicated(keep = 'first')]
-    df['future'] = df["close"].shift(-FUTURE_PERIOD_PREDICT)
+    df['future'] = df["GOAL"].shift(-predict_period)
 
 
 
@@ -139,7 +140,7 @@ def train_data(iq,symbol,symbols,timeframe):
     main_df.fillna(method="ffill", inplace=True)
     main_df.dropna(inplace=True)
 
-    main_df['target'] = list(map(classify, main_df['close'], main_df['future']))
+    main_df['target'] = list(map(classify, main_df['GOAL'], main_df['future']))
 
     main_df.dropna(inplace=True)
 
@@ -171,7 +172,7 @@ def train_data(iq,symbol,symbols,timeframe):
         train_y = np.asarray(train_y)
         
 
-    NAME = f"{LEARNING_RATE}-{SEQ_LEN}-SEQ-{FUTURE_PERIOD_PREDICT}-{EPOCHS}-{BATCH_SIZE}-PRED-{int(time.time())}"  
+    NAME = f"{LEARNING_RATE}-{seq_len}-SEQ-{predict_period}-{EPOCHS}-{BATCH_SIZE}-PRED-{int(time.time())}"  
     
 
 
@@ -184,7 +185,7 @@ def train_data(iq,symbol,symbols,timeframe):
     model.add(BatchNormalization())
 
     model.add(LSTM(NEURONS, return_sequences=True))
-    model.add(Dropout(0.2))
+    model.add(Dropout(0.1))
     model.add(BatchNormalization())
 
     model.add(LSTM(NEURONS))
