@@ -6,7 +6,9 @@ import os
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
 
-# para login add usuario e senha no arquivo .env
+# para login  renomear arquivo .env_example para .env 
+# atenção tem que manter o ponto!
+# apos renomear  abra o arquivo .env e add usuario e senha e tipo da conta
 iq = ej.iq_login(email = os.getenv("USERNAME"), password=os.getenv("PASSWORD"), AccountType=os.getenv("ACCOUNT_TYPE")) # REAL OR DEMO
 
 
