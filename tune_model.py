@@ -10,8 +10,7 @@ tf.enable_v2_behavior()
 from tensorflow.python.framework.ops import disable_eager_execution
 disable_eager_execution()
 
-# from tensorflow.python.compiler.mlcompute import mlcompute
-# mlcompute.set_mlc_device(device_name='cpu')
+
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, LSTM, BatchNormalization, GRU, Bidirectional
@@ -21,10 +20,12 @@ from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoa
 import time
 import os
 from ejtrader import iq_login, iq_get_data
-from settings import seq_len, predict_period, LEARNING_RATE, EPOCHS, BATCH_SIZE, EARLYSTOP, VALIDATION_TRAIN
+from settings import seq_len, predict_period, LEARNING_RATE, EPOCHS, BATCH_SIZE, EARLYSTOP, VALIDATION_TRAIN, ismac
 from kerastuner.tuners import RandomSearch
 
-
+if ismac:
+    from tensorflow.python.compiler.mlcompute import mlcompute
+    mlcompute.set_mlc_device(device_name='cpu')
 from indicator import Indicators
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'

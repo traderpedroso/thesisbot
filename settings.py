@@ -24,10 +24,10 @@ gale_seq = 5            # QUANTIDADE MAXIMA DE MARTINGALE
           
 min_payout = 0.70      # MINIMO PAYOUT PARA ABRIR UMA ORDEM
 min_balance =  0        # VALOR MINIMO NA CONTA PARA ABRIR UM TRADE
-min_prob = 0.90         # % MINIMA DE PROBABILIDADE PARA ABIR UM TRADE 
+min_prob = 0.90        # % MINIMA DE PROBABILIDADE PARA ABIR UM TRADE 
 
-
-
+# for mac and tensorflow 2.4 from apple
+ismac = True
 # data parameters
 seq_len = 5  
 predict_period = 1 
