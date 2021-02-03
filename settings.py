@@ -1,11 +1,13 @@
 import ejtrader as ej
+from dotenv import load_dotenv
+load_dotenv()
 import os
 
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
 
-
-iq = ej.iq_login(email = 'user', password='pass', AccountType='DEMO') # REAL OR DEMO
+# para login add usuario e senha no arquivo .env
+iq = ej.iq_login(email = os.getenv("USERNAME"), password=os.getenv("PASSWORD"), AccountType=os.getenv("ACCOUNT_TYPE")) # REAL OR DEMO
 
 
 symbol = 'EURUSD'       
