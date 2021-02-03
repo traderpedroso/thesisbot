@@ -65,7 +65,7 @@ while(1):
     
     if check_stop_time(hour,minutes):
         print('wating to pass opening market')
-        countdown(2400)
+        countdown(1800)
         predict_count = 10
         
           

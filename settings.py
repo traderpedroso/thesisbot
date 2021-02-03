@@ -22,7 +22,7 @@ symbols = [symbol]
 gale_multiply = 2       # FATOR DE MULTIPLICAÇÃO DE MARTINGALE
 gale_seq = 5            # QUANTIDADE MAXIMA DE MARTINGALE
           
-min_payout = 0.80      # MINIMO PAYOUT PARA ABRIR UMA ORDEM
+min_payout = 0.70      # MINIMO PAYOUT PARA ABRIR UMA ORDEM
 min_balance =  0        # VALOR MINIMO NA CONTA PARA ABRIR UM TRADE
 min_prob = 0.90         # % MINIMA DE PROBABILIDADE PARA ABIR UM TRADE 
 

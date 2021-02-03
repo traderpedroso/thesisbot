@@ -10,8 +10,8 @@ tf.enable_v2_behavior()
 from tensorflow.python.framework.ops import disable_eager_execution
 disable_eager_execution()
 
-from tensorflow.python.compiler.mlcompute import mlcompute
-mlcompute.set_mlc_device(device_name='cpu')
+# from tensorflow.python.compiler.mlcompute import mlcompute
+# mlcompute.set_mlc_device(device_name='cpu')
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, LSTM, BatchNormalization, GRU, Bidirectional
