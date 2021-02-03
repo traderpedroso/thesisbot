@@ -55,7 +55,6 @@ logs/
 
 .idea/
 .vs/
-.env
 .pk
 .pem
 .pub
