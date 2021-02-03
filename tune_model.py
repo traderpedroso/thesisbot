@@ -174,7 +174,7 @@ def train_data(iq,symbol,symbols,timeframe):
         model.add(LSTM(hp.Int('units',
                                         min_value=10,
                                         max_value=70,
-                                        step=5), input_shape=(train_x.shape[1:]), return_sequences=True))
+                                        step=1), input_shape=(train_x.shape[1:]), return_sequences=True))
         model.add(Dropout(0.1))
         model.add(BatchNormalization())
 
